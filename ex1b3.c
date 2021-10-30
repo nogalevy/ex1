@@ -4,14 +4,11 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-
 void check_and_print(int argc, char *argv[]);
-
 
 int main(int argc, char *argv[])
 {
 	check_and_print(argc, argv);
-
 	return EXIT_SUCCESS;
 }
 

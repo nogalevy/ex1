@@ -14,12 +14,12 @@ int main(int argc, char *argv[])
 {
 	FILE *fp = NULL;
 	check_argv(argc);
-	print_string(arcv[1]);
+	print_string(argv[1]);
 
 	return EXIT_SUCCESS;
 }
 
-void check_argv(int argc )
+void check_argv(int argc)
 {
 	if(argc != 2)
 	{
@@ -30,5 +30,5 @@ void check_argv(int argc )
 
 void print_string(char *string)
 {
-	printf("s", string);
+	printf("%s", string);
 }

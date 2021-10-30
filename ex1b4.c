@@ -54,7 +54,10 @@ void write_commands(FILE **fp, char* filename)
 
 	scanf("%s", line);
 
-	while(!(strcmp(line, "history") == 0 || strncmp(line, "echo", 4) == 0 || strncmp(line,"ps", 2) == 0 || strcmp(line, "exit") == 0))
+	while(!(strcmp(line, "history") == 0 ||
+					strncmp(line, "echo", 4) == 0 ||
+					strncmp(line,"ps", 2) == 0 ||
+					strcmp(line, "exit") == 0))
 	{
 		perror("bad command\n");
 		scanf("%s", line);
@@ -111,12 +114,10 @@ void write_commands(FILE **fp, char* filename)
 						exit(EXIT_FAILURE);
 					}
 				}
-
 			}
 		}
 		scanf("%s", line);
 	}
-
 }
 
 
@@ -124,7 +125,6 @@ void write_commands(FILE **fp, char* filename)
 void close_file(FILE **fp)
 {
     int res = fclose(*fp);
-
 	//checks if action failed
 	if(res !=0)
 		printf("Error!\n");
