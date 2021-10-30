@@ -1,64 +1,34 @@
-/*
-	File: ex0a.c
-Reading Data from Input file into 2D Array and Locating Maximum Line
-=====================================================================
-Written by: Tali Kalev, ID:208629691, Login: talikal
-		and	Noga Levy, ID:315260927, Login: levyno
-
-This program receives the name of an input and output file into the argument
-vector. The program opens both files and reads data from the input file into a
-2D dynamic array. The program then locates the "Max Line" in the 2D array and
-prints the index of that line into the output file. The max line is represented
-by the line in which the value in column j is larger than or equal to the
-value in the same column j of all the other rows. If no max line is found, the
-program prints the value -1 into the output file.
-
-Complie: gcc -Wall ex0a.c -o ex0a
-Run: ex0a
-
-Input: An array where the first digit in each line represents the number
-	   of digits in that line.
-	   Example:
-	   2 5 15
-	   3 12 17 0
-	   1 9
-	   5 11 16 -2 38 79
-
-Output: The index of the row that meets the requirements of "Max Line".
-		Example:
-		1
-
-*/
-
 
 // --------include section------------------------
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <stdbool.h> //?
+#include <sys/types.h>
+#include <time.h> //for clock()
 
 const int SIZE = 50000;
 
 // -------prototype section-----------------------
 FILE* open_file(char* argv,  char *mode);
-void print_file(FILE *ofp, int row_ind);
 void close_file(FILE **fp);
 void check_argv(int argc );
+void calc_sort_times(char *filename);
+void bubblesort(int arr[], FILE *fp);
+void quicksort(int arr[], file *fp);
+void parent_calc(FILE *fp);
 
 //---------main section---------------------------
+
 int main(int argc, char *argv[])
 {
-	FILE *fp = NULL; // input file pointer
-
+	clock_t time_req = clock();
+	
 	check_argv(argc);
-	srand(argv[2]);
-	fp = open_file(argv[1], "r");
-	create_parent(argv[1]);
-
-	print_file(fp, row_ind); // print result in output file
-
-	free_array(&data);
-	close_file(&ifp);
-	close_file(&ofp);
+	srand(atoi(argv[2])); //needed atoi?
+	calc_sort_times(argv[1]);
+	
+	time_req = (double)(clock() - time_req)/CLOCKS_PER_SEC;
+	printf("%d\n", time_req);
 
 	return EXIT_SUCCESS;
 }
@@ -66,7 +36,7 @@ int main(int argc, char *argv[])
 //------------------------------------------------
 
 //function opens file and checks that process was completed successfully
-FILE * open_file(char* filename,  char *mode)
+FILE * open_file(char* filename,  char *mode) //2 stars for filename??
 {
 	FILE *fp = fopen(filename, mode);
 
@@ -81,9 +51,13 @@ FILE * open_file(char* filename,  char *mode)
 
 //-------------------------------------------------
 
-void create_parent(char *filename)
+void calc_sort_times(char *filename) 
 {
-	int i,j,k, kid[2];
+	int i,j,k;
+	pid_t pid;
+	int child_id
+	FILE *fp = open_file(filename, "r+"); //r or r+? and should we send &filename?
+
 	for(i = 0; i < 50; i++)
 	{
 		static int arr[SIZE];
@@ -93,22 +67,112 @@ void create_parent(char *filename)
 
 		for(k = 0; k < 2; k++)
 		{
-			kid[k] = fork();
+			pid = fork();
 
-			if(kid[k] == 0)
-				//do something
+			if(pid < 0)
+			{
+				perror("Cannot fork()");
+				exit (EXIT_FAILURE);
+			}
 
+			if(pid == 0)
+			{
+				if(k == 0)
+					bubblesort(arr, &fp);
+				else
+					quicksort(arr, &fp);
+
+				exit(EXIT_SUCCESS);
+			}
 		}
+		for(k = 0; k < 2; k++)
+			child_id = wait(&pid);  //another way?
 
 	}
+	parent_calc(fp);
+	close_file(&fp);
+	 //unlink?????????
+	unlink(filename);
 }
 //------------------------------------------------
 
-//function receives index of max row and prints into output file
-void print_file(FILE *ofp, int row_ind)
+void bubblesort(int arr[], FILE *fp)
 {
-	fprintf(ofp, "%d", row_ind);
+	//Check inital time
+	//sort
+	//check finishing time
+	//add to file: 1. "b" for bubble sort 2. time it took to sort and new line?
+
+	clock_t time_req = clock();
+
+	//sort
+
+	time_req = (double)(clock() - time_req)/CLOCKS_PER_SEC;
+	fprintf(fp, "%c %lf\n", "b", time_req);
 }
+
+void quicksort(int arr[], file *fp)
+{
+	//check inital time
+	//sort
+	//check finishing time
+	//add to file 1. "q" for quick sort 2. time it took to sort and new line?
+
+	clock_t time_req = clock()
+
+	//sort
+
+	time_req = (double)(clock() - time_req)/CLOCKS_PER_SEC;
+	fprintf(fp, "%c %lf\n", "q", time_req);
+}
+
+void parent_calc(FILE *fp)
+{
+	//puts pointer to start of file
+	//define variables: sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort;
+	//start loop to read characters and numbers
+	//after b, read number, compare to max/min, add to sum;
+	//after q, read number, compare to max/min, add to sum;
+	//when out of loop print to output "average time for bsort", "average time for qsort", "min time for bsort", "min time for qsort", "max for bsort", "max for qsort" new line
+
+	double sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort, curr; //what are starting values of min??
+	char type;
+
+	sum_bsort = sum_qsort = max_bsort = max_qsort = 0;
+
+	fseek(fp, 0, SEEK_SET);
+
+	fscanf(fp, "%c", type);
+
+	while(!feof(fp))
+	{
+		fscanf(fp, "%lf" curr);
+
+		if(strcmp(type, "b") == 0)
+		{
+			if(curr < min_bsort)
+				min_bsort = curr;
+			if(curr > max_bsort)
+				max_bsort = curr;
+			sum_bsort += curr; 
+		}
+		else
+		{
+			if(curr < min_bsort)
+				min_bsort = curr;
+			if(curr > max_bsort)
+				max_bsort = curr;
+			sum_bsort += curr; 	
+		}
+
+		fscanf(fp, "%c", type);
+	}
+
+	printf("%lf %lf %lf %lf %lf %lf", sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort);
+}
+
+
+
 
 //------------------------------------------------
 
@@ -155,19 +219,7 @@ void quicksort(int number[25],int first,int last){
 
    }
 }
-
-
-
-
-
-
-
-
 */
-
-
-
-
 
 
 //------------------------------------------------
@@ -182,9 +234,7 @@ void close_file(FILE **fp)
 		printf("Error!\n");
 }
 
-//------------------------------------------------\
-
-
+//------------------------------------------------
 
 //function checks that both input file and output file names are
 //given in argument vector
