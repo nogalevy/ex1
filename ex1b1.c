@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
 {
 	FILE *fp = NULL;
 	check_argv(argc);
-	open_file(argv[1], "r+");
+	fp = open_file(argv[1], "r+");
+
 	read_print_file(fp);
 	close_file(&fp);
 
@@ -36,7 +37,6 @@ FILE * open_file(char* filename,  char *mode)
 {
 	FILE *fp = fopen(filename, mode);
 
-	//if unsuccessful stops program
 	if (fp == NULL)
 	{
 		printf("Error! cannot open %s  ", filename);
@@ -47,10 +47,16 @@ FILE * open_file(char* filename,  char *mode)
 
 void read_print_file(FILE *fp)
 {
-	char line[MAX_LEN];
-	
-	while(fgets(line, sizeof(line), fp) != NULL)
-		printf("%s\n",line);
+	size_t size = 0;
+	char* line = NULL;
+
+	getline(&line, &size, fp);
+
+	while(!feof(fp))
+	{
+		printf("%s",line);
+		getline(&line, &size, fp);
+	}
 }
 
 //function closes file
