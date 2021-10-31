@@ -1,0 +1,31 @@
+File: ex0a.c
+Reading Data from Input file into 2D Array and Locating Maximum Line
+=====================================================================
+Written by: Tali Kalev, ID:208629691, Login: talikal
+		and	Noga Levy, ID:315260927, Login: levyno
+
+This program receives the name of an input and output file into the argument
+vector. The program opens both files and reads data from the input file into a
+2D dynamic array. The program then locates the "Max Line" in the 2D array and
+prints the index of that line into the output file. The max line is represented
+by the line in which the value in column j is larger than or equal to the
+value in the same column j of all the other rows. If no max line is found, the
+program prints the value -1 into the output file.
+
+Run time of the program is O(M*N^2) when M is numbers of cols and N is
+numbers of rows.
+
+Compile: gcc -Wall ex0a.c -o ex0a
+Run: ex0a
+
+Input: An array where the first digit in each line represents the number
+	   of digits in that line.
+	   Example:
+	   2 5 15
+	   3 12 17 0
+	   1 9
+	   5 11 16 -2 38 79
+
+Output: The index of the row that meets the requirements of "Max Line".
+		Example:
+		1
