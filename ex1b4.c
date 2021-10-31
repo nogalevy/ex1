@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+//------------------------------------------------
+
 void check_argv(int argc)
 {
 	if(argc != 2)
@@ -32,6 +34,8 @@ void check_argv(int argc)
 		exit(EXIT_FAILURE);
 	}
 }
+
+//------------------------------------------------
 
 FILE * open_file(char* filename,  char *mode)
 {
@@ -47,12 +51,14 @@ FILE * open_file(char* filename,  char *mode)
 }
 
 
+//------------------------------------------------
+
 void write_commands(FILE **fp, char* filename)
 {
 	char line[MAX_LEN];
 	pid_t pid;
 
-	scanf("%s", line);
+	fgets(line, MAX_LEN, stdin);
 
 	while(!(strcmp(line, "history") == 0 ||
 					strncmp(line, "echo", 4) == 0 ||
@@ -60,7 +66,7 @@ void write_commands(FILE **fp, char* filename)
 					strcmp(line, "exit") == 0))
 	{
 		perror("bad command\n");
-		scanf("%s", line);
+		fgets(line, MAX_LEN, stdin);
 	}
 
 
@@ -116,10 +122,11 @@ void write_commands(FILE **fp, char* filename)
 				}
 			}
 		}
-		scanf("%s", line);
+		fgets(line, MAX_LEN, stdin);
 	}
 }
 
+//------------------------------------------------
 
 //function closes file
 void close_file(FILE **fp)

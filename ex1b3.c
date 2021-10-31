@@ -12,6 +12,8 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+//------------------------------------------------
+
 void check_and_print(int argc, char *argv[])
 {
 	switch(argc)

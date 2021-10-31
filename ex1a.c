@@ -55,16 +55,15 @@ void calc_sort_times(char *filename)
 {
 	int i, j, k, child_id;
 	pid_t pid;
+	static int arr[SIZE];
 	FILE *fp = open_file(filename, "r+"); //r or r+? and should we send &filename?
 
 	//run 50 times
 	for(i = 0; i < 50; i++)
 	{
-		static int arr[SIZE]; // not sure
-
 		//insert data to array - can move to function
 		for(j = 0; j < SIZE; j++)
-			arr[j] = rand();
+			arr[j] = (rand() % 1000); 
 
 		//create two child proccess
 		for(k = 0; k < 2; k++)
@@ -80,9 +79,9 @@ void calc_sort_times(char *filename)
 			if(pid == 0) //if child
 			{
 				if(k == 0)
-					bubblesort(arr, &fp);
+					handle_bubble_sort(arr, &fp);
 				else
-					quicksort(arr, &fp);
+					handle_quick_sort(arr, &fp);
 
 				exit(EXIT_SUCCESS);
 			}
@@ -94,10 +93,12 @@ void calc_sort_times(char *filename)
 
 	parent_calc(fp);
 	close_file(&fp);
-	unlink(filename); //unlink?????????
+	unlink(filename);
 }
 
 //------------------------------------------------
+
+
 
 void handle_bubble_sort(int arr[], FILE *fp)
 {
@@ -218,11 +219,11 @@ void parent_calc(FILE *fp)
 		}
 		else
 		{
-			if(curr < min_bsort)
-				min_bsort = curr;
-			if(curr > max_bsort)
-				max_bsort = curr;
-			sum_bsort += curr;
+			if(curr < min_qsort)
+				min_qsort = curr;
+			if(curr > max_qsort)
+				max_qsort = curr;
+			sum_qsort += curr;
 		}
 
 		fscanf(fp, "%c", type);
