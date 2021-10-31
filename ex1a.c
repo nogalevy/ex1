@@ -1,4 +1,6 @@
+
 // --------include section------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h> //?
@@ -9,10 +11,12 @@
 #include <sys/time.h>
 
 // ----------- const section ---------------------
-const int SIZE = 25000;
+
+const int SIZE = 50000;
 const int NUM_OF_LOOPS = 50;
 
 // -------prototype section-----------------------
+
 FILE* open_file(char* argv,  char *mode);
 void close_file(FILE **fp);
 void check_argv(int argc );
@@ -32,15 +36,14 @@ void swap(int* a, int* b);
 int main(int argc, char *argv[])
 {
 	struct timeval t0, t1;
-	gettimeofday(&t0, NULL);
-	
-	
+	gettimeofday(&t0, NULL); //calculating start time
 	
 	check_argv(argc);
-	srand(atoi(argv[2])); //needed atoi?
-	calc_sort_times(argv[1]);
+	srand(atoi(argv[2])); 
+	calc_sort_times(argv[1]); 
 
-	gettimeofday(&t1, NULL);
+	gettimeofday(&t1, NULL); //calculating end time
+	//printing time parent took to run
 	printf("%f\n",(double)(t1.tv_usec - t0.tv_usec)/1000000 +
 									(double)(t1.tv_sec - t0.tv_sec));
 
@@ -65,6 +68,8 @@ FILE * open_file(char* filename,  char *mode)
 
 //-------------------------------------------------
 
+//function receives filename and calculates sort time
+//of bubble and quick sort via children
 void calc_sort_times(char *filename)
 {
 	int i, j;
@@ -72,10 +77,9 @@ void calc_sort_times(char *filename)
 	int arr[SIZE];
 	FILE *fp = open_file(filename, "w+");
 
-	//run 50 times
 	for(i = 0; i < NUM_OF_LOOPS; i++)
 	{
-		randomize_array(arr);
+		randomize_array(arr); //putting random numbers in array
 
 		//create two child proccess
 		for(j = 0; j < 2; j++)
@@ -91,18 +95,20 @@ void calc_sort_times(char *filename)
 			if(pid == 0) //if child
 				handle_child(j, arr, &fp);
 		}
-		//parent wait to both children
+		//parent wait for both children
 		for(j = 0; j < 2; j++)
 			wait(NULL);
 	}
 
-	parent_calc(fp);
+	parent_calc(fp); //parent prints data from file
 	close_file(&fp);
-	unlink(filename);
+	unlink(filename); //deleting file
 }
 
 //------------------------------------------------
 
+//function receives child number, randomized array and opened file
+//appropriate child sorts accordingly
 void handle_child(int child_num, int arr[], FILE **fp)
 {
 	if(child_num == 0)
@@ -110,10 +116,12 @@ void handle_child(int child_num, int arr[], FILE **fp)
 	else
 		handle_quick_sort(arr, &fp);
 
-	exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS); //child ends process
 }
 
+//------------------------------------------------
 
+//function recieves array and enters randomized numbers into it
 void randomize_array(int arr[])
 {
 	int index;
@@ -122,6 +130,10 @@ void randomize_array(int arr[])
 		arr[index] = (rand() % 1000); 
 }
 
+//------------------------------------------------
+
+//function receives array and file, sorts array and puts calculated
+//run time into file
 void handle_bubble_sort(int arr[], FILE ***fp)
 {
 	struct timeval t0, t1;
@@ -133,6 +145,10 @@ void handle_bubble_sort(int arr[], FILE ***fp)
 									(double)(t1.tv_sec - t0.tv_sec));
 }
 
+//------------------------------------------------
+
+//function receives array and file, sorts array and puts calculated
+//run time into file
 void handle_quick_sort(int arr[], FILE ***fp)
 {
 	int first = 0, last = SIZE -1;
@@ -146,6 +162,7 @@ void handle_quick_sort(int arr[], FILE ***fp)
 }
 //------------------------------------------------
 
+//function receives array and sorts it using the bubble sort algorithm
 void bubble_sort(int arr[])
 {
 	int step, i, temp;
@@ -168,6 +185,8 @@ void bubble_sort(int arr[])
 
 //------------------------------------------------
 
+//function receives array, starting and ending point and sorts the array
+//using the quick sort algorithm
 void quick_sort(int arr[], int first_i, int last_i)
 {
     if(first_i < last_i)
@@ -181,6 +200,7 @@ void quick_sort(int arr[], int first_i, int last_i)
 
 //------------------------------------------------
 
+//function receives array and partitions accordingly
 int partition (int arr[], int low, int high)
 {
     int pivot = arr[high];  // selecting last element as pivot
@@ -201,32 +221,39 @@ int partition (int arr[], int low, int high)
 
 //------------------------------------------------
 
+//function receives file filled with run time data and prints
+//out average, min and max of all run time data 
 void parent_calc(FILE *fp)
 {
-	double sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort, curr; //what are starting values of min??
+	double sum_bsort, sum_qsort, min_bsort, min_qsort, 
+				max_bsort, max_qsort, curr; 
 	char type;
 
-	sum_bsort = sum_qsort = max_bsort = max_qsort = 0; //reset all (min_bsort and min_qsort ?)
+	//setting initial values
+	sum_bsort = sum_qsort = max_bsort = max_qsort = 0;
 	min_qsort = min_bsort = 100;
 
-	//fseek(fp, 0, SEEK_SET); //moves file pointer position to the beginning of the file
+	//returning to start of file
 	rewind(fp);
 	fscanf(fp, "%c", &type); //read char from file into 'type' variable
 
 	while(!feof(fp))
 	{
+		//read data about specific sorting algorithm
 		fscanf(fp, "%lf", &curr);
 
-		if(type == 'b')
+		if(type == 'b') //if bubble sort
 		{
+			//compares numbers and adds to sum
 			if(curr < min_bsort)
 				min_bsort = curr;
 			if(curr > max_bsort)
 				max_bsort = curr;
 			sum_bsort += curr;
 		}
-		else
+		else	//if quick sort
 		{
+			//compares numbers and adds to sum
 			if(curr < min_qsort)
 				min_qsort = curr;
 			if(curr > max_qsort)
@@ -234,12 +261,16 @@ void parent_calc(FILE *fp)
 			sum_qsort += curr;
 		}
 
-		fscanf(fp, "%c", &type);
+		//read next sort type
+		fscanf(fp, "%c", &type); 
 	}
+	//dividing sums to get average
 	sum_bsort /= NUM_OF_LOOPS;
 	sum_qsort /= NUM_OF_LOOPS;
 	
-	printf("%lf %lf %lf %lf %lf %lf\n", sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort);
+	//prints onto screen values calculated
+	printf("%lf %lf %lf %lf %lf %lf\n", sum_bsort, sum_qsort, min_bsort, 
+													min_qsort, max_bsort, max_qsort);
 	
 }
 
@@ -270,7 +301,7 @@ void check_argv(int argc )
 
 //------------------------------------------------
 
-// to swap two numbers
+//function swaps two numbers
 void swap(int* a, int* b)
 {
     int t = *a;
