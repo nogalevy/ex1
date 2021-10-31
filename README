@@ -5,7 +5,7 @@ Calculating Executable Times of Bubble and Quick Sort
 Written by: Tali Kalev, ID:208629691, Login: talikal
 		and	Noga Levy, ID:315260927, Login: levyno
 
-This program receives in the argument vectors, the name of a file and 
+This program receives in the argument vectors, the name of a file and
 an integer. The program uses the integer to draw random numbers into
 an array of 50000 cells. The parent of the program creates 2 children
 via the command fork(). One child sorts the array using bubble sort
@@ -17,18 +17,24 @@ array 50 times.
 At the end of this process, the parent goes over the file in which
 the results were printed and calculates the minimum, maximum and average
 times for each sorting methods.
-The parent prints in the command line these calculations and when it is 
+The parent prints in the command line these calculations and when it is
 finished it prints the time its own executable time.
+
+The average running time for the parent process is: 407.506
+Note: We were unable to run for the requested 10 times because
+			of issues with the inferno.
+
+
 
 Compile: gcc -Wall ex1a.c -o ex1a
 Run: ./ex1a <filename> <integer>
 
 Input: When running the executable file, add name of file and integer.
 	   Example: ./ex1a filename 17
-	 
 
-Output: Average bubble sort time, average quick sort time, 	
-		minimum bubble sort time, minimum quick sort time, 
+
+Output: Average bubble sort time, average quick sort time,
+		minimum bubble sort time, minimum quick sort time,
 		maximum bubble sort time, maximum bubble sort time,
 		Parent sort time.
 		Example: 8.232045 8.259982 7.979422 0.012284 8.485131 8.485131
@@ -47,7 +53,7 @@ This program receives a series of commands from the user. The program
 reads these commands and writes them into a file that it receives via
 the argument vector. If the user types "history", "echo", or "ps" then
 the program runs the matching executable file. The program finishes when
-the user inputs "exit" as a command. 
+the user inputs "exit" as a command.
 
 ex1b1.c
 history command handler
@@ -79,7 +85,7 @@ Compile: gcc -Wall ex1b1.c -o history
 Run: ./shell <filename>
 
 Input: When running the file: ./shell <filename>
-		and then a list of commands.	
+		and then a list of commands.
 		Example: echo hello
 				 exit
 
