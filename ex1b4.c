@@ -1,5 +1,6 @@
 //shell
 
+// -------include section-----------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -8,7 +9,7 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-
+// -------include section-----------------------
 const int MAX_LEN = 100;
 
 const char C_HISTORY[] = "history"; //command history
@@ -16,6 +17,7 @@ const char C_PS[] = "ps"; //command ps
 const char C_ECHO[] = "echo"; //command echo
 const char C_EXIT[] = "exit"; //command exit
 
+// -------prototype section-----------------------
 void check_argv(int argc);
 FILE * open_file(char* filename,  char *mode);
 void write_commands(FILE **fp, char* filename);
@@ -23,6 +25,7 @@ void close_file(FILE **fp);
 void error_exec();
 bool is_valid_input(char *line);
 
+// -------main section-----------------------
 int main(int argc, char *argv[])
 {
 	FILE *fp;
@@ -131,11 +134,15 @@ void write_commands(FILE **fp, char* filename)
 	}
 }
 
+//-----------------------------------------
+
 void error_exec()
 {
 	perror("execlp() failed");
 	exit(EXIT_FAILURE);
 }
+
+//-----------------------------------------
 
 //function closes file
 void close_file(FILE **fp)
@@ -146,6 +153,8 @@ void close_file(FILE **fp)
 	if(res !=0)
 		printf("Error!\n");
 }
+
+//-----------------------------------------
 
 bool is_valid_input(char *line)
 {

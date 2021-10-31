@@ -1,17 +1,18 @@
 //history
 
+// -------include section-----------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h> //?
 #include <sys/types.h>
 
-const int MAX_LEN = 100;
-
+// -------prototype section-----------------------
 void check_argv(int argc);
 FILE * open_file(char* filename,  char *mode);
 void read_print_file(FILE *fp);
 void close_file(FILE **fp);
 
+//---------main section---------------------------
 int main(int argc, char *argv[])
 {
 	FILE *fp = NULL;
