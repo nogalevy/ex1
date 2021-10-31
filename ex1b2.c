@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+//------------------------------------------------
+
 void check_argv(int argc)
 {
 	if(argc != 2)
@@ -26,6 +28,8 @@ void check_argv(int argc)
 		exit(EXIT_FAILURE);
 	}
 }
+
+//------------------------------------------------
 
 void print_string(char *string)
 {

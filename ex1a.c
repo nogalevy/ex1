@@ -3,32 +3,46 @@
 #include <stdlib.h>
 #include <stdbool.h> //?
 #include <sys/types.h>
-#include <time.h> //for clock()
+//#include <time.h> //for clock()
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/time.h>
 
 // ----------- const section ---------------------
-const int SIZE = 50000;
+const int SIZE = 25000;
+const int NUM_OF_LOOPS = 50;
 
 // -------prototype section-----------------------
 FILE* open_file(char* argv,  char *mode);
 void close_file(FILE **fp);
 void check_argv(int argc );
 void calc_sort_times(char *filename);
-void bubblesort(int arr[], FILE *fp);
-void quicksort(int arr[], file *fp);
+void bubble_sort(int arr[]);
+void quick_sort(int arr[], int first_i, int last_i);
 void parent_calc(FILE *fp);
+void randomize_array(int arr[]);
+void handle_child(int child_num, int arr[], FILE **fp);
+void handle_bubble_sort(int arr[], FILE ***fp);
+void handle_quick_sort(int arr[], FILE ***fp);
+int partition (int arr[], int low, int high);
+void swap(int* a, int* b);
 
 //---------main section---------------------------
 
 int main(int argc, char *argv[])
 {
-	clock_t time_req = clock();
-
+	struct timeval t0, t1;
+	gettimeofday(&t0, NULL);
+	
+	
+	
 	check_argv(argc);
 	srand(atoi(argv[2])); //needed atoi?
 	calc_sort_times(argv[1]);
 
-	time_req = (double)(clock() - time_req)/CLOCKS_PER_SEC;
-	printf("%d\n", time_req);
+	gettimeofday(&t1, NULL);
+	printf("%f\n",(double)(t1.tv_usec - t0.tv_usec)/1000000 +
+									(double)(t1.tv_sec - t0.tv_sec));
 
 	return EXIT_SUCCESS;
 }
@@ -36,14 +50,14 @@ int main(int argc, char *argv[])
 //------------------------------------------------
 
 //function opens file and checks that process was completed successfully
-FILE * open_file(char* filename,  char *mode) //2 stars for filename??
+FILE * open_file(char* filename,  char *mode)
 {
 	FILE *fp = fopen(filename, mode);
 
 	//if unsuccessful stops program
 	if (fp == NULL)
 	{
-		printf("Error! cannot open %s  ", filename);
+		printf("Error! cannot open %s  \n", filename);
 		exit (EXIT_FAILURE);
 	}
     return fp;
@@ -53,21 +67,18 @@ FILE * open_file(char* filename,  char *mode) //2 stars for filename??
 
 void calc_sort_times(char *filename)
 {
-	int i, j, k, child_id;
+	int i, j;
 	pid_t pid;
-	FILE *fp = open_file(filename, "r+"); //r or r+? and should we send &filename?
+	int arr[SIZE];
+	FILE *fp = open_file(filename, "w+");
 
 	//run 50 times
-	for(i = 0; i < 50; i++)
+	for(i = 0; i < NUM_OF_LOOPS; i++)
 	{
-		static int arr[SIZE]; // not sure
-
-		//insert data to array - can move to function
-		for(j = 0; j < SIZE; j++)
-			arr[j] = rand();
+		randomize_array(arr);
 
 		//create two child proccess
-		for(k = 0; k < 2; k++)
+		for(j = 0; j < 2; j++)
 		{
 			pid = fork();
 
@@ -78,61 +89,66 @@ void calc_sort_times(char *filename)
 			}
 
 			if(pid == 0) //if child
-			{
-				if(k == 0)
-					bubblesort(arr, &fp);
-				else
-					quicksort(arr, &fp);
-
-				exit(EXIT_SUCCESS);
-			}
+				handle_child(j, arr, &fp);
 		}
 		//parent wait to both children
-		for(k = 0; k < 2; k++)
-			child_id = wait(&pid);  //another way?
+		for(j = 0; j < 2; j++)
+			wait(NULL);
 	}
 
 	parent_calc(fp);
 	close_file(&fp);
-	unlink(filename); //unlink?????????
+	unlink(filename);
 }
 
 //------------------------------------------------
 
-void handle_bubble_sort(int arr[], FILE *fp)
+void handle_child(int child_num, int arr[], FILE **fp)
 {
-	//Check inital time
-	//sort
-	//check finishing time
-	//add to file: 1. "b" for bubble sort 2. time it took to sort and new line?
-	int step, i;
-	clock_t time_req = clock();
+	if(child_num == 0)
+		handle_bubble_sort(arr, &fp);
+	else
+		handle_quick_sort(arr, &fp);
 
-	//bubble sort from - https://www.programiz.com/dsa/bubble-sort
+	exit(EXIT_SUCCESS);
+}
+
+
+void randomize_array(int arr[])
+{
+	int index;
+	
+	for(index = 0; index < SIZE; index++)
+		arr[index] = (rand() % 1000); 
+}
+
+void handle_bubble_sort(int arr[], FILE ***fp)
+{
+	struct timeval t0, t1;
+	
+	gettimeofday(&t0, NULL);
 	bubble_sort(arr);
-	time_req = (double)(clock() - time_req)/CLOCKS_PER_SEC;
-	fprintf(fp, "%c %lf\n", "b", time_req);
+	gettimeofday(&t1, NULL);
+	fprintf(**fp, "%s %f\n", "b", (double)(t1.tv_usec - t0.tv_usec)/1000000 +
+									(double)(t1.tv_sec - t0.tv_sec));
 }
 
-void handle_quick_sort(int arr[], file *fp)
+void handle_quick_sort(int arr[], FILE ***fp)
 {
-	//check inital time
-	//sort
-	//check finishing time
-	//add to file 1. "q" for quick sort 2. time it took to sort and new line?
-	int i, j, pivot, temp;
-	clock_t time_req = clock()
-
-	//quick sort
-	quick_sort(arr, first,int last);
-	time_req = (double)(clock() - time_req)/CLOCKS_PER_SEC;
-	fprintf(fp, "%c %lf\n", "q", time_req);
+	int first = 0, last = SIZE -1;
+	struct timeval t0, t1;
+	
+	gettimeofday(&t0, NULL);
+	quick_sort(arr, first, last);
+	gettimeofday(&t1, NULL);
+	fprintf(**fp, "%s %f\n", "q", (double)(t1.tv_usec - t0.tv_usec)/1000000 +
+									(double)(t1.tv_sec - t0.tv_sec));
 }
-
 //------------------------------------------------
 
 void bubble_sort(int arr[])
 {
+	int step, i, temp;
 	// loop to access each array element
 	for (step = 0; step < SIZE - 1; ++step) {
 		// loop to compare array elements
@@ -142,7 +158,7 @@ void bubble_sort(int arr[])
 			if (arr[i] > arr[i + 1]) {
 				// swapping occurs if elements
 				// are not in the intended order
-				int temp = array[i];
+				temp = arr[i];
 				arr[i] = arr[i + 1];
 				arr[i + 1] = temp;
 			}
@@ -158,8 +174,8 @@ void quick_sort(int arr[], int first_i, int last_i)
     {
         int q;
         q = partition(arr, first_i, last_i);
-        quicksort(arr, first_i, q-1);
-        quicksort(arr, q+1, last_i);
+        quick_sort(arr, first_i, q-1);
+        quick_sort(arr, q+1, last_i);
     }
 }
 
@@ -187,28 +203,21 @@ int partition (int arr[], int low, int high)
 
 void parent_calc(FILE *fp)
 {
-	//- puts pointer to start of file
-	//- define variables: sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort;
-	//- start loop to read characters and numbers
-	//- after b, read number, compare to max/min, add to sum;
-	//- after q, read number, compare to max/min, add to sum;
-	//- when out of loop print to output "average time for bsort",
-	//	"average time for qsort", "min time for bsort", "min time for qsort", "max for bsort",
-	// 	"max for qsort" new line
-
 	double sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort, curr; //what are starting values of min??
 	char type;
 
 	sum_bsort = sum_qsort = max_bsort = max_qsort = 0; //reset all (min_bsort and min_qsort ?)
+	min_qsort = min_bsort = 100;
 
-	fseek(fp, 0, SEEK_SET); //moves file pointer position to the beginning of the file
-	fscanf(fp, "%c", type); //read char from file into 'type' variable
+	//fseek(fp, 0, SEEK_SET); //moves file pointer position to the beginning of the file
+	rewind(fp);
+	fscanf(fp, "%c", &type); //read char from file into 'type' variable
 
 	while(!feof(fp))
 	{
-		fscanf(fp, "%lf" curr);
+		fscanf(fp, "%lf", &curr);
 
-		if(strcmp(type, "b") == 0)
+		if(type == 'b')
 		{
 			if(curr < min_bsort)
 				min_bsort = curr;
@@ -218,17 +227,20 @@ void parent_calc(FILE *fp)
 		}
 		else
 		{
-			if(curr < min_bsort)
-				min_bsort = curr;
-			if(curr > max_bsort)
-				max_bsort = curr;
-			sum_bsort += curr;
+			if(curr < min_qsort)
+				min_qsort = curr;
+			if(curr > max_qsort)
+				max_qsort = curr;
+			sum_qsort += curr;
 		}
 
-		fscanf(fp, "%c", type);
+		fscanf(fp, "%c", &type);
 	}
-	//add calc avarage
-	printf("%lf %lf %lf %lf %lf %lf", sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort);
+	sum_bsort /= NUM_OF_LOOPS;
+	sum_qsort /= NUM_OF_LOOPS;
+	
+	printf("%lf %lf %lf %lf %lf %lf\n", sum_bsort, sum_qsort, min_bsort, min_qsort, max_bsort, max_qsort);
+	
 }
 
 
@@ -240,7 +252,7 @@ void close_file(FILE **fp)
   int res = fclose(*fp);
 	//checks if action failed
 	if(res !=0)
-		printf("Error!\n");
+		printf("Error! Failed to close file.\n");
 }
 
 //------------------------------------------------
@@ -251,7 +263,7 @@ void check_argv(int argc )
 {
 	if(argc != 3)
 	{
-		printf("ERROR");
+		printf("Error! Incorrect number of arguments.\n");
 		exit(EXIT_FAILURE);
 	}
 }

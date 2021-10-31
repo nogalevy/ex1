@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+//------------------------------------------------
+
 void check_argv(int argc)
 {
 	if(argc != 2)
@@ -44,6 +46,8 @@ void check_argv(int argc)
 		exit(EXIT_FAILURE);
 	}
 }
+
+//------------------------------------------------
 
 FILE * open_file(char* filename,  char *mode)
 {
@@ -58,6 +62,8 @@ FILE * open_file(char* filename,  char *mode)
     return fp;
 }
 
+
+//------------------------------------------------
 
 void write_commands(FILE **fp, char* filename)
 {

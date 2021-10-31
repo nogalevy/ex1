@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+//------------------------------------------------
+
 void check_argv(int argc )
 {
 	if(argc != 2)
@@ -32,6 +34,8 @@ void check_argv(int argc )
 		exit(EXIT_FAILURE);
 	}
 }
+
+//------------------------------------------------
 
 FILE * open_file(char* filename,  char *mode)
 {
@@ -44,6 +48,8 @@ FILE * open_file(char* filename,  char *mode)
 	}
     return fp;
 }
+
+//------------------------------------------------
 
 void read_print_file(FILE *fp)
 {
@@ -58,6 +64,8 @@ void read_print_file(FILE *fp)
 		getline(&line, &size, fp);
 	}
 }
+
+//------------------------------------------------
 
 //function closes file
 void close_file(FILE **fp)
