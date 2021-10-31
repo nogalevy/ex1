@@ -1,5 +1,25 @@
 //ps or ps -a
 
+/*
+Files: exb3.c 
+Shell Commands Running from File
+=====================================================================
+Written by: Tali Kalev, ID:208629691, Login: talikal
+		and	Noga Levy, ID:315260927, Login: levyno
+
+ex1b3.c
+ps command handler
+print the proccess id-
+This program can either receive no arguments via the argument vector or one.
+If the program recieves none then it will print the process ID of the current
+process. If the program receives an argument (other than the name of the file)
+then it will print the process ID of the current and parent process.
+
+Compile:  gcc -Wall ex1b3.c -o ps
+		 
+
+*/
+
 // -------include section-----------------------
 #include <stdio.h>
 #include <stdlib.h>

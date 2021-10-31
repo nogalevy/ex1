@@ -1,4 +1,23 @@
 //history
+/*
+
+Files: ex1b1.c 
+Shell Commands Running from File
+=====================================================================
+Written by: Tali Kalev, ID:208629691, Login: talikal
+		and	Noga Levy, ID:315260927, Login: levyno
+
+ex1b1.c
+history command handler
+prints the history of the commands -
+This program receives via the argument vector the name of a file.
+The program then reads line by line the information in the file and
+prints it on the screen.
+
+
+Compile: gcc -Wall ex1b1.c -o history
+
+*/
 
 // -------include section-----------------------
 #include <stdio.h>

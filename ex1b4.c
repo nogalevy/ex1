@@ -1,4 +1,56 @@
-//shell
+/*
+
+Files: ex1b1.c ex1b2.c exb3.c exb4.c
+Shell Commands Running from File
+=====================================================================
+Written by: Tali Kalev, ID:208629691, Login: talikal
+		and	Noga Levy, ID:315260927, Login: levyno
+
+ex1b4.c
+This program receives a series of commands from the user. The program
+reads these commands and writes them into a file that it receives via
+the argument vector. If the user types "history", "echo", or "ps" then
+the program runs the matching executable file. The program finishes when
+the user inputs "exit" as a command. 
+
+ex1b1.c
+history command handler
+prints the history of the commands -
+This program receives via the argument vector the name of a file.
+The program then reads line by line the information in the file and
+prints it on the screen.
+
+ex1b2.c
+echo command handler
+print string-
+This program receives via the argument vector a string. The program
+then prints this string on the screen.
+
+ex1b3.c
+ps command handler
+print the proccess id-
+This program can either receive no arguments via the argument vector or one.
+If the program recieves none then it will print the process ID of the current
+process. If the program receives an argument (other than the name of the file)
+then it will print the process ID of the current and parent process.
+
+
+Compile: gcc -Wall ex1b1.c -o history
+		 gcc -Wall ex1b2.c -o echo
+		 gcc -Wall ex1b3.c -o ps
+		 gcc -Wall ex1b4.c -o shell
+
+Run: ./shell <filename>
+
+Input: When running the file: ./shell <filename>
+		and then a list of commands.	
+		Example: echo hello
+				 exit
+
+
+Output: The string after echo is printed.
+		Example: hello
+*/
 
 // -------include section-----------------------
 #include <stdio.h>

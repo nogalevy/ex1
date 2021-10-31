@@ -1,4 +1,43 @@
 
+/*
+
+File: ex1a.c
+Calculating Executable Times of Bubble and Quick Sort
+=====================================================================
+Written by: Tali Kalev, ID:208629691, Login: talikal
+		and	Noga Levy, ID:315260927, Login: levyno
+
+This program receives in the argument vectors, the name of a file and 
+an integer. The program uses the integer to draw random numbers into
+an array of 50000 cells. The parent of the program creates 2 children
+via the command fork(). One child sorts the array using bubble sort
+while the other uses quick sort. Both children calculate the time it
+took them to sort the array and print this result into the file sent
+in the argument vector.
+The parent repeates this process of creating 2 children that sort the
+array 50 times.
+At the end of this process, the parent goes over the file in which
+the results were printed and calculates the minimum, maximum and average
+times for each sorting methods.
+The parent prints in the command line these calculations and when it is 
+finished it prints the time its own executable time.
+
+Compile: gcc -Wall ex1a.c -o ex1a
+Run: ./ex1a <filename> <integer>
+
+Input: When running the executable file, add name of file and integer.
+	   Example: ./ex1a filename 17
+	 
+
+Output: Average bubble sort time, average quick sort time, 	
+		minimum bubble sort time, minimum quick sort time, 
+		maximum bubble sort time, maximum bubble sort time,
+		Parent sort time.
+		Example: 8.232045 8.259982 7.979422 0.012284 8.485131 8.485131
+				411.873370
+
+*/
+
 // --------include section------------------------
 
 #include <stdio.h>
