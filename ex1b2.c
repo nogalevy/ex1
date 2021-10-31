@@ -1,18 +1,18 @@
 //echo
 
+// -------include section-----------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h> //?
 #include <sys/types.h>
 
-const int MAX_LEN = 100;
-
+// -------prototype section-----------------------
 void check_argv(int argc);
 void print_string(char *string);
 
+// -------main section-----------------------
 int main(int argc, char *argv[])
 {
-	FILE *fp = NULL;
 	check_argv(argc);
 	print_string(argv[1]);
 
@@ -34,5 +34,5 @@ void check_argv(int argc)
 
 void print_string(char *string)
 {
-	printf("%s", string);
+	printf("%s\n", string);
 }
